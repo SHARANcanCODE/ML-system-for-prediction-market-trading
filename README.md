@@ -1,9 +1,5 @@
 # Prediction Market ML Trading System
 
-![Tests](https://github.com/SHARANcanCODE/end-to-end-ml-system-for-prediction-market-trading/actions/workflows/tests.yml/badge.svg)
-![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
-![License MIT](https://img.shields.io/badge/license-MIT-green)
-
 > End-to-end ML system for prediction market trading. **521K markets** ingested · **78 engineered features** · **7 model architectures** evaluated · walk-forward validated · deployed live to a VPS with A/B testing.
 
 > **Verdict: NO-GO** — backtest edge collapsed **86×** under live conditions (alpha decay + 2026 fee rollout). Project documents the rigorous research-stop, not a profitable strategy.
