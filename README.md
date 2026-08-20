@@ -2,8 +2,6 @@
 
 > End-to-end ML system for prediction market trading. **521K markets** ingested · **78 engineered features** · **7 model architectures** evaluated · walk-forward validated · deployed live to a VPS with A/B testing.
 
-> **Verdict: NO-GO** — backtest edge collapsed **86×** under live conditions (alpha decay + 2026 fee rollout). Project documents the rigorous research-stop, not a profitable strategy.
-
 ## Highlights
 
 - **Walk-forward validated (offline)**: 5/5 windows profitable, permutation test **p = 0.003**, **$8.61/trade** out-of-sample edge
