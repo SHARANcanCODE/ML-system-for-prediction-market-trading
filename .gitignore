@@ -1,0 +1,35 @@
+# Data (large files, collect via scripts/collect_data.py)
+data/raw/
+data/processed/
+data/cache/
+data/features/*.parquet
+
+# Logs
+logs/
+*.log
+
+# Secrets
+.env
+*.key
+credentials.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

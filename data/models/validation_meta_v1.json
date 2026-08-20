@@ -1,0 +1,64 @@
+{
+  "nb12_validation": {
+    "flat_bet_analysis": {
+      "n_trades": 685,
+      "total_pnl": 5898.133193973446,
+      "avg_pnl_per_trade": 8.610413421859047,
+      "win_rate": 0.7927007299270074,
+      "profitable_windows": 5,
+      "total_windows": 5,
+      "unique_tokens": 250
+    },
+    "permutation_test": {
+      "actual_pnl": 5898.133193973446,
+      "random_mean_pnl": 4116.035368317462,
+      "random_std_pnl": 696.8317787062217,
+      "p_value": 0.003,
+      "z_score": 2.5574290382748197
+    },
+    "maker_strategy": {
+      "fill_rates": {
+        "1.0": {
+          "n_trades": 2925,
+          "total_pnl": 12421.367100836607,
+          "avg_pnl": 4.246621231055251,
+          "win_rate": 0.7100854700854701,
+          "total_cost": 12649.052737512007,
+          "profit_factor": 1.7915544479718712
+        },
+        "0.8": {
+          "n_trades": 2337,
+          "total_pnl": 9943.045522109878,
+          "avg_pnl": 4.254619393286212,
+          "win_rate": 0.7115960633290543,
+          "total_cost": 10099.079614669801,
+          "profit_factor": 1.7944343677560166
+        },
+        "0.6": {
+          "n_trades": 1775,
+          "total_pnl": 7180.610046889271,
+          "avg_pnl": 4.045414110923533,
+          "win_rate": 0.704225352112676,
+          "total_cost": 7728.0554839361685,
+          "profit_factor": 1.7278798945964595
+        },
+        "0.4": {
+          "n_trades": 1190,
+          "total_pnl": 4961.021057368553,
+          "avg_pnl": 4.1689252582929015,
+          "win_rate": 0.7210084033613445,
+          "total_cost": 5262.374333099158,
+          "profit_factor": 1.7417591385866513
+        }
+      }
+    },
+    "true_htr_model": {
+      "n_markets": 45955,
+      "n_features": 9,
+      "test_auc": 0.9852502178099222,
+      "test_brier": 0.045829214775096175,
+      "market_baseline_auc": 0.9747055696571229,
+      "market_baseline_brier": 0.0644119528575573
+    }
+  }
+}

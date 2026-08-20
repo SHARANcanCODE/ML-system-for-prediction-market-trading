@@ -1,0 +1,30 @@
+name: polymarket
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - plotly
+  - jupyterlab
+  - ipykernel
+  - xgboost
+  - lightgbm
+  - scipy
+  - statsmodels
+  - pytest
+  - pip
+  - pip:
+    - py-clob-client
+    - python-dotenv
+    - httpx
+    - websockets
+    - polars
+    - optuna
+    - transformers
+    - torch
+    - spacy
