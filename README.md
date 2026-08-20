@@ -82,80 +82,6 @@ LightGBM beats every DL architecture on tabular features. DistilBERT has value o
 
 This is the project's most important number — it quantifies how much regime change between data collection and deployment cost the strategy. Detailed analysis below.
 
-### Setup
-
-7 configurations on a VPS, $1,000 starting capital each, half-Kelly sizing, 8 days live.
-
-![Phase 6 Equity Curves](assets/phase6_equity_curves.png)
-
-| Config | Strategy | Trades | PnL | WR | Max DD |
-|--------|----------|-------:|----:|---:|------:|
-| main | HTR + all exits | 248 | **−$25.88** | 47% | −12.1% |
-| v1_baseline | HTR clean start | 20 | −$43.73 | 45% | −5.5% |
-| v2 | HTR + 5 exit-rule fixes | 20 | −$40.17 | 30% | −4.8% |
-| small_markets | Low-liquidity filter | 13 | −$29.87 | 23% | −5.0% |
-| small_longshot | Longshots on small markets | 15 | −$51.07 | 7% | −5.0% |
-| sports_only | Sports category only | 18 | −$74.96 | 6% | −7.2% |
-| inverse | Inverted signal (sanity check) | 16 | −$74.81 | 12% | −7.2% |
-
-**Per-trade asymmetry**: `main` loses **−$0.10/trade**, `inverse` loses **−$4.68/trade** — a **47× gap**. The HTR signal carries directional information (otherwise inversion would not amplify losses); the live edge exists but is too small to overcome fees and spread in the 2026 regime. `sports_only` (WR 6%, 18 trades) confirms zero edge on sports specifically.
-
-> **Statistical caveat.** Only `main` (248 trades) is a robust sample; the other configs (13–20 trades) are directional indicators, not statistical conclusions. The NO-GO verdict rests on `main` + Deflated Sharpe Ratio + the 7-config consistency, not on any single small-N config.
-
-### Why backtest ≫ paper: alpha decay from institutional flow
-
-Backtest data spans the 2024–early-2025 regime; paper trading hit a structurally different market in 2026. The ~1-year gap between training-data cutoff and deployment was intentional: retraining on 2026 data with institutional MMs already present would not have changed the structural conclusion (alpha decay is regime-level, not data-level). Deployment served as confirmation, not as a fresh training experiment.
-
-```mermaid
-timeline
-    title Polymarket Regime Evolution
-    2022 : Retail-dominated, wide spreads
-    2023 : Kalshi CFTC approval
-    H2-2024 : Susquehanna, Citadel enter as MMs
-            : Spreads tighten 3¢ → 0.5¢
-            : US election markets open
-            : Polymarket volume grows ~100×
-    Jan 2026 : Fees rollout — crypto 15-min markets
-    Feb 2026 : Fees extend to sports
-    Mar 2026 : Broad fee rollout (0.75–1.80% per side)
-             : This project's deployment window → NO-GO verdict
-```
-
-| Regime change (2024–2025) | Effect on retail edge |
-|---|---|
-| Susquehanna, Citadel Securities, Jane Street entered prediction markets as market makers | Tightened spreads from ~3¢ to ~0.5¢ on liquid markets |
-| Polymarket native market-making program + maker rebates launched | Professional flow captures most provided liquidity |
-| Kalshi CFTC approval (2023) → US institutional access; election markets opened H2-2024 | Order books deepen, mean-reversion half-life collapses |
-| Polymarket volume grew ~100× (2022 → 2024) | Inefficiencies that existed in retail-dominated regime get arbed in seconds |
-| **Polymarket rolled out taker fees across most categories (Jan–Mar 2026)** | 0.75% (sports) to 1.80% (crypto) per side; geopolitics is the only fee-free category remaining |
-
-**Fee rollout timeline.** Jan 2026 — fees first introduced on 15-minute crypto markets to fund the maker-rebate program. Feb 18, 2026 — extended to select sports markets (NCAAB, Serie A). Mar 30, 2026 — broad rollout across crypto, sports, politics, economics, finance, culture, weather, tech, mentions. Mar 31 — calculation switched from USD-volume to share-based, but fees themselves remained. Maker rebates of 20–25% of collected fees go to limit-order providers (so providing liquidity is still marginally profitable; taking it is not).
-
-**Implication for this project.** The HTR signal is a slow mean-reversion detector trained on the inefficient era. By deployment, professional MMs were filling the same mispricings before the model could trade them — most of the residual edge belongs to whoever provides liquidity fastest. The 2026 fee rollout adds a 1.5–3.6% round-trip cost on top, which **structurally exceeds the per-trade edge** for retail taker strategies. Continuing to develop this approach on Polymarket is no longer economically viable: alpha decay (López de Prado, *Advances in Financial Machine Learning*, Ch.11) compounded with explicit transaction costs has moved the platform out of reach for this class of model.
-
-### Deflated Sharpe Ratio (López de Prado Ch.8)
-
-Standard Sharpe Ratio is biased upward when many strategies are tested in parallel (Optuna 50 trials × 2 model families + manual sweeps = effective ~100 independent trials). The Deflated SR compares the observed SR against the *expected maximum* SR from N random trials — a multiple-testing correction. Here it confirms paper trading SR is statistically indistinguishable from a random strategy's worst case:
-
-```
-SR_observed:  -0.860     ← paper trading produced a negative SR
-E[max SR]:    +2.751     ← even random search of 100 strategies would expect a higher max
-z:           -25.01
-p-value:       0.000
-significant:   False     ← cannot reject H₀ that strategy ≤ random  →  NO-GO
-```
-
-**Note on the apparent contradiction with backtest p=0.003.** The two p-values test different null hypotheses on different datasets:
-
-| Test | Dataset | H₀ | Result |
-|---|---|---|---|
-| Permutation test | Backtest trades | Returns are random label permutation | Reject (p=0.003) → backtest signal is real |
-| Deflated SR | Paper trading | SR ≤ E[max SR over N=100 trials] | Cannot reject → live SR no better than random search |
-
-Permutation test does not correct for multiple testing across strategy variants; DSR does. The backtest result was statistically significant *unconditionally*, but failed once corrected for the ~100 variants tried during research. Live deployment confirmed DSR's stricter verdict — which is why the verdict is NO-GO.
-
----
-
 ## Hybrid Pipeline: Rule-Based + ML
 
 ```
@@ -206,41 +132,6 @@ Permutation test does not correct for multiple testing across strategy variants;
 
 ---
 
-<details>
-<summary><b>Project Structure</b></summary>
-
-```
-src/
-├── data/           API client, collectors, ETL pipeline
-├── execution/      Paper trading engine
-├── features/       NLP features, FinBERT sentiment
-├── risk/           Risk manager: Kelly, drawdown, regime-aware exits
-├── strategies/     Strategies + strategy router + signal engine
-└── utils/          Fee model, logging
-
-notebooks/
-├── 01_eda/                    6 notebooks
-├── 02_feature_engineering/    78-feature pipeline
-├── 03_modeling/               LightGBM, XGBoost, calibration
-├── 04_backtesting/            HTR strategy, validation, paper trading analysis
-├── 05_deep_learning/          CNN 1D, Transformer
-└── 06_improvements/           Clustered feature importance
-```
-
-</details>
-
-<details>
-<summary><b>Notebooks Guide (16 notebooks)</b></summary>
-
-**Headline notebooks (start here):**
-
-| # | Notebook | Why it matters |
-|---|----------|------------|
-| 4.4 | Paper Trading Analysis | NO-GO verdict + root cause across all 7 A/B configs |
-| 4.3 | Validation | Walk-forward 5/5, permutation p=0.003; identified leakage in v0 |
-| 3.1 | Classical ML | LGB AUC = 0.678 with PurgedKFold + Optuna |
-| 6.1 | Clustered Feature Importance | NMI + ONC, 10/78 features = noise |
-
 **Full list:**
 
 | # | Notebook | Key Result |
@@ -265,20 +156,3 @@ notebooks/
 </details>
 
 ---
-
-## Data & Setup
-
-```bash
-conda env create -f environment.yml
-conda activate polymarket
-
-jupyter lab notebooks/
-python scripts/collect_data.py --limit 500 --prices-days 90
-pytest tests/ -v
-```
-
-See [docs/data_guide.md](docs/data_guide.md).
-
-## License
-
-MIT
