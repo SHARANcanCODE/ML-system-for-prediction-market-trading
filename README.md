@@ -68,18 +68,6 @@ LightGBM beats every DL architecture on tabular features. DistilBERT has value o
 
 ---
 
-## Paper Trading — Case Study (Phase 6)
-
-### The core finding: 86× edge collapse
-
-| Stage | Per-trade edge |
-|---|---:|
-| Backtest (2024–early-2025 data) | **+$8.61** |
-| Paper trading (2026 deployment) | **−$0.10** |
-| **Decay factor** | **−86×** |
-
-This is the project's most important number — it quantifies how much regime change between data collection and deployment cost the strategy. Detailed analysis below.
-
 ## Hybrid Pipeline: Rule-Based + ML
 
 ```
